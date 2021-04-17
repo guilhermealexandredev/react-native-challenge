@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as actions from "../actions/nodes";
+import * as actionsBlocks from "../actions/blocks";
 import Node from "../components/Node";
 import { Heading } from "material-bread";
 
@@ -21,15 +22,19 @@ export class Nodes extends React.Component {
   }
 
   toggleNodeExpanded(node) {
+    const url = node.url === this.state.expandedNodeURL ? null : node.url;
     this.setState({
-      expandedNodeURL: node.url === this.state.expandedNodeURL ? null : node.url
+      expandedNodeURL: url
     });
+    if(url){
+      this.props.actionsBlocks.getBlocks(node);
+    }
   }
 
   render() {
-    const { nodes } = this.props;
+    const { nodes, blocks } = this.props;
     return (
-      <View>
+      <ScrollView>
         <Heading style={styles.heading} type={4}>
           Nodes
         </Heading>
@@ -39,16 +44,19 @@ export class Nodes extends React.Component {
             key={node.url}
             expanded={node.url === this.state.expandedNodeURL}
             toggleNodeExpanded={this.toggleNodeExpanded}
+            blocks={blocks[node.url] || {}}
           />
         ))}
-      </View>
+      </ScrollView>
     );
   }
 }
 
 Nodes.propTypes = {
   actions: PropTypes.object.isRequired,
-  nodes: PropTypes.object.isRequired
+  actionsBlocks: PropTypes.object.isRequired,
+  nodes: PropTypes.object.isRequired,
+  blocks: PropTypes.object,
 };
 const styles = StyleSheet.create({
   heading: { marginLeft: 30, marginTop: 45, fontWeight: "700" }
@@ -56,13 +64,15 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    nodes: state.nodes
+    nodes: state.nodes,
+    blocks: state.blocks
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators(actions, dispatch),
+    actionsBlocks: bindActionCreators(actionsBlocks, dispatch)
   };
 }
 

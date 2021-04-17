@@ -2,11 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import colors from "../constants/colors";
-import { Paper, Subtitle, BodyText, Caption } from "material-bread";
+import { Paper, Subtitle, Caption } from "material-bread";
 import { Expander } from "./Expander";
 import Status from "./Status";
+import Blocks from './Blocks';
 
-const Node = ({ node, expanded, toggleNodeExpanded }) => (
+const Node = ({ node, expanded, toggleNodeExpanded, blocks }) => (
   <TouchableOpacity onPress={() => toggleNodeExpanded(node)}>
     <Paper elevation={2} style={styles.container}>
       <View style={styles.headingContainer}>
@@ -25,7 +26,7 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => (
       <Expander expanded={expanded} style={styles.icon(expanded)} />
       {expanded && (
         <View style={styles.heading}>
-          <BodyText type={1} text={"Blocks go here"} />
+          <Blocks blocks={blocks} />
         </View>
       )}
     </Paper>
@@ -40,7 +41,8 @@ Node.propTypes = {
     loading: PropTypes.bool
   }).isRequired,
   expanded: PropTypes.bool,
-  toggleNodeExpanded: PropTypes.func.isRequired
+  toggleNodeExpanded: PropTypes.func.isRequired,
+  blocks: PropTypes.object
 };
 
 const styles = StyleSheet.create({
